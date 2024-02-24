@@ -1,0 +1,51 @@
+[gd_scene load_steps=10 format=3 uid="uid://h7u8etak86k3"]
+
+[ext_resource type="Script" path="res://scripts & scenes/world.gd" id="1_0q376"]
+[ext_resource type="Texture2D" uid="uid://brc0xpx1yflqb" path="res://assets/grass.png" id="1_lu05b"]
+[ext_resource type="PackedScene" uid="uid://dwwyyt5xdrxoj" path="res://scripts & scenes/PlayerXR.tscn" id="2_54uce"]
+[ext_resource type="Texture2D" uid="uid://bglg58qvv8ysv" path="res://assets/red_metal.png" id="4_4b130"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_l3u02"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ykwp4"]
+albedo_texture = ExtResource("1_lu05b")
+roughness = 0.0
+emission_energy_multiplier = 0.0
+rim = 0.0
+rim_tint = 1.0
+clearcoat = 0.0
+clearcoat_roughness = 0.0
+anisotropy = -1.0
+refraction_scale = 0.03
+uv1_scale = Vector3(300, 300, 300)
+
+[sub_resource type="BoxMesh" id="BoxMesh_xd3qu"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_rspc5"]
+albedo_texture = ExtResource("4_4b130")
+
+[sub_resource type="BoxMesh" id="BoxMesh_r47u8"]
+
+[node name="World" type="Node3D"]
+script = ExtResource("1_0q376")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="."]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="StaticBody3D"]
+shape = SubResource("BoxShape3D_l3u02")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="StaticBody3D/CollisionShape3D"]
+transform = Transform3D(350, 0, 0, 0, 0.1, 0, 0, 0, 350, 0, -0.05, 0)
+material_override = SubResource("StandardMaterial3D_ykwp4")
+mesh = SubResource("BoxMesh_xd3qu")
+
+[node name="XROrigin3D" parent="." instance=ExtResource("2_54uce")]
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(-0.676598, 0.708089, 0.202051, 0.6809, 0.497166, 0.537775, 0.280339, 0.501434, -0.818519, 0, 2.12807, 2.54771)
+shadow_enabled = true
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.99375, 0.492426, 0)
+material_override = SubResource("StandardMaterial3D_rspc5")
+mesh = SubResource("BoxMesh_r47u8")
