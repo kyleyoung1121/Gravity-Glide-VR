@@ -1684,7 +1684,7 @@ skeleton = NodePath("../..")
 
 [node name="HingeJoint3D" type="HingeJoint3D" parent="."]
 transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 0, 41.49, 0)
-node_a = NodePath("../SwingRigidBody3D")
+node_b = NodePath("../SwingRigidBody3D")
 motor/target_velocity = 0.349066
 motor/max_impulse = 0.5
 
