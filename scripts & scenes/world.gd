@@ -45,6 +45,8 @@ func _process(delta):
 
 func _input(event):
 	if event.is_action_pressed("ui_text_newline"):
+		update_force(10)
+		await get_tree().create_timer(0.1).timeout
 		update_force(force_magnitude)
 		clear_torque()
 	

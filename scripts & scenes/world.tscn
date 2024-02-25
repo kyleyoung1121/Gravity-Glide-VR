@@ -1,4 +1,4 @@
-[gd_scene load_steps=76 format=3 uid="uid://h7u8etak86k3"]
+[gd_scene load_steps=77 format=3 uid="uid://h7u8etak86k3"]
 
 [ext_resource type="Script" path="res://scripts & scenes/world.gd" id="1_0q376"]
 [ext_resource type="PackedScene" uid="uid://dwwyyt5xdrxoj" path="res://scripts & scenes/PlayerXR.tscn" id="2_54uce"]
@@ -15,6 +15,7 @@
 [ext_resource type="Texture2D" uid="uid://pp5kb7qugepc" path="res://assets/buildings/source/Bui/Bui/building (9).jpg" id="12_00yvr"]
 [ext_resource type="Texture2D" uid="uid://8n1vb0mwenbi" path="res://assets/buildings/source/Bui/Bui/building (8).jpg" id="13_dkmwu"]
 [ext_resource type="Texture2D" uid="uid://cj8c4ahnd6okx" path="res://assets/buildings/source/Bui/Bui/building (1).jpg" id="14_igi1h"]
+[ext_resource type="AudioStream" uid="uid://hnl5nvf8yksi" path="res://assets/audio/wind-loopable.mp3" id="15_2akjk"]
 [ext_resource type="Texture2D" uid="uid://dpd6bjd0ox1c2" path="res://assets/african_plain_trees_2.png" id="16_v1ftc"]
 [ext_resource type="Texture2D" uid="uid://cxvylqx6liqtj" path="res://assets/african_plain_trees_3.png" id="17_y87qq"]
 
@@ -1720,6 +1721,13 @@ skeleton = NodePath("../../..")
 
 [node name="PlayerXR" parent="SwingRigidBody3D" instance=ExtResource("2_54uce")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.470157, 3.56791, -0.499731)
+
+[node name="WindSound" type="AudioStreamPlayer3D" parent="SwingRigidBody3D/PlayerXR"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.00349712, 1.31281, -1.06818)
+stream = ExtResource("15_2akjk")
+volume_db = -15.214
+autoplay = true
+attenuation_filter_db = 0.0
 
 [node name="ImpulseLocation" type="Marker3D" parent="SwingRigidBody3D"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.15392, 0)
