@@ -2,13 +2,21 @@ extends Node3D
 
 var xr_interface: XRInterface
 var swing_rigid_body : RigidBody3D
+var hinge_joint: HingeJoint3D
 var wind_sound_player: AudioStreamPlayer
-var ride_music_player: AudioStreamPlayer
+var ride_music_player: AudioStreamPlayer3D
 var direction_lock_timer: Timer
+var ride_finish_timer: Timer
+var ride_speedup_timer: Timer
+var info_text: Label3D
 
 # Starting force applied to the swing
 var force_magnitude = 2.5
 var direction_change_lock = false
+
+# Keep track of the direction we are *trying* to go
+var going_backwards = true
+
 
 func _ready():
 	# Set up XR
@@ -24,24 +32,31 @@ func _ready():
 	
 	# Grab relevant items for swing process
 	swing_rigid_body = get_node("SwingRigidBody3D")
+	hinge_joint = get_node("HingeJoint3D")
 	wind_sound_player = get_node("SwingRigidBody3D/PlayerXR/WindSound")
 	direction_lock_timer = get_node("SwingRigidBody3D/DirectionChangeTimer")
+	ride_finish_timer = get_node("RideFinishTimer")
+	ride_speedup_timer = get_node("RideSpeedupTimer")
 	ride_music_player = get_node("RideMusic")
+	info_text = get_node("InfoText")
+	
+	swing_rigid_body.mass = 1
+	swing_rigid_body.gravity_scale = 1
 	
 	# Set the initial values for the wind sound
 	wind_sound_player.volume_db = 0
 	wind_sound_player.pitch_scale = 1
-
-# Keep track of the direction we are *trying* to go
-var going_backwards = true
+	
+	# Ensure that the info text is visible on program start
+	info_text.visible = true
 
 
 func _process(delta):
 	#print(swing_rigid_body.angular_velocity.x)
-	print("Constant Force: ", swing_rigid_body.constant_force)
+	#print("Constant Force: ", swing_rigid_body.constant_force)
 	#print("Constant Torque: ", swing_rigid_body.constant_torque)
-	print("Angle Vel: ", swing_rigid_body.angular_velocity)
-
+	#print("Angle Vel: ", swing_rigid_body.angular_velocity)
+	#print("Angle: ", swing_rigid_body.rotation)
 	
 	# Only consider changing directions when we haven't done so recently
 	if not direction_change_lock:
@@ -66,17 +81,18 @@ func _process(delta):
 
 func _input(event):
 	# If the user presses 'enter,' start the ride
-	if event.is_action_pressed("ui_text_newline"):
+	if event.is_action_pressed("start_ride"):
 		# For a brief duration, set the constant force to 10 to jump-start the movement
 		update_force(10)
 		await get_tree().create_timer(0.1).timeout
 		# Once the ride is moving, we can return to our desired force value
 		update_force(force_magnitude)
 		clear_torque()
-	
-	# If the user presses 'space,' increase the ride speed
-	if event.is_action_pressed("ui_select"):
-		swing_rigid_body.add_constant_force(Vector3(0, 0, 0.3 * swing_rigid_body.constant_force.z))
+		# Clear the info text when the ride starts
+		info_text.visible = false
+		# Start the timers for the ride
+		ride_finish_timer.start()
+		ride_speedup_timer.start()
 
 
 # Clear the existing constant force and set the new value
@@ -104,6 +120,20 @@ func set_wind_sound(speed):
 		wind_sound_player.pitch_scale = 2.0
 
 
+func ride_complete():
+	print("Ride done!")
+	info_text.visible = true
+	swing_rigid_body.linear_damp = 0
+	swing_rigid_body.angular_damp = 0
+	clear_torque()
+	update_force(0)
+	swing_rigid_body.mass = 1
+	swing_rigid_body.gravity_scale = 1
+	going_backwards = true
+	force_magnitude = 2.5
+	direction_change_lock = false
+
+
 # Loop the wind audio
 func _on_wind_sound_finished():
 	wind_sound_player.play()
@@ -115,3 +145,25 @@ func _on_ride_music_finished():
 
 func _on_direction_change_timer_timeout():
 	direction_change_lock = false
+
+
+func _on_ride_finish_timer_timeout():
+	update_force(0)
+	await get_tree().create_timer(5).timeout
+	# After allowing the ride to swing unpowered, apply the breaks (damping)
+	swing_rigid_body.linear_damp = 0.3
+	swing_rigid_body.angular_damp = 0.3
+	await get_tree().create_timer(3).timeout
+	swing_rigid_body.linear_damp = 0.6
+	swing_rigid_body.angular_damp = 0.6
+	await get_tree().create_timer(3).timeout
+	swing_rigid_body.linear_damp = 0.9
+	swing_rigid_body.angular_damp = 0.9
+	await get_tree().create_timer(3).timeout
+	ride_complete()
+
+func _on_ride_speedup_timer_timeout():
+	# Increase speed of the ride
+	swing_rigid_body.add_constant_force(Vector3(0, 0, 0.3 * swing_rigid_body.constant_force.z))
+	# Start the speedup timer again
+	ride_speedup_timer.start()
