@@ -40,7 +40,7 @@ var _crouch_button_down : bool = false
 
 
 # Controller node
-@onready var _controller := XRHelpers.get_xr_controller(self)
+@onready var _controller := XRHelpers.get_xr_controller()
 
 
 # Add support for is_xr_class on XRTools classes

@@ -1687,8 +1687,6 @@ skeleton = NodePath("../..")
 [node name="HingeJoint3D" type="HingeJoint3D" parent="."]
 transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 0, 41.49, 0)
 node_b = NodePath("../SwingRigidBody3D")
-motor/target_velocity = 0.349066
-motor/max_impulse = 0.5
 
 [node name="SwingRigidBody3D" type="RigidBody3D" parent="."]
 
@@ -1920,6 +1918,20 @@ stream = ExtResource("19_e7l17")
 unit_size = 19.81
 autoplay = true
 
+[node name="InfoText" type="Label3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.94614, -6.91885)
+text = "Press Space to Start!"
+font_size = 100
+outline_size = 30
+
+[node name="RideFinishTimer" type="Timer" parent="."]
+wait_time = 60.0
+
+[node name="RideSpeedupTimer" type="Timer" parent="."]
+wait_time = 15.0
+
 [connection signal="finished" from="SwingRigidBody3D/PlayerXR/WindSound" to="." method="_on_wind_sound_finished"]
 [connection signal="timeout" from="SwingRigidBody3D/DirectionChangeTimer" to="." method="_on_direction_change_timer_timeout"]
 [connection signal="finished" from="RideMusic" to="." method="_on_ride_music_finished"]
+[connection signal="timeout" from="RideFinishTimer" to="." method="_on_ride_finish_timer_timeout"]
+[connection signal="timeout" from="RideSpeedupTimer" to="." method="_on_ride_speedup_timer_timeout"]
