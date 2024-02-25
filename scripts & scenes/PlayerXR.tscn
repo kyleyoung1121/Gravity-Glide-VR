@@ -6,7 +6,7 @@
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_fmcka"]
 albedo_color = Color(0.796078, 1, 0.776471, 1)
 
-[node name="XROrigin3D" type="XROrigin3D"]
+[node name="PlayerXR" type="XROrigin3D"]
 
 [node name="XRCamera3D" type="XRCamera3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.7, 0)
