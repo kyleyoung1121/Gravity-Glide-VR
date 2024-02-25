@@ -3,10 +3,12 @@ extends Node3D
 var xr_interface: XRInterface
 var swing_rigid_body : RigidBody3D
 var wind_sound_player: AudioStreamPlayer
+var ride_music_player: AudioStreamPlayer
+var direction_lock_timer: Timer
 
 # Starting force applied to the swing
-var force_magnitude = 2
-
+var force_magnitude = 2.5
+var direction_change_lock = false
 
 func _ready():
 	# Set up XR
@@ -23,6 +25,8 @@ func _ready():
 	# Grab relevant items for swing process
 	swing_rigid_body = get_node("SwingRigidBody3D")
 	wind_sound_player = get_node("SwingRigidBody3D/PlayerXR/WindSound")
+	direction_lock_timer = get_node("SwingRigidBody3D/DirectionChangeTimer")
+	ride_music_player = get_node("RideMusic")
 	
 	# Set the initial values for the wind sound
 	wind_sound_player.volume_db = 0
@@ -37,18 +41,25 @@ func _process(delta):
 	print("Constant Force: ", swing_rigid_body.constant_force)
 	#print("Constant Torque: ", swing_rigid_body.constant_torque)
 	print("Angle Vel: ", swing_rigid_body.angular_velocity)
+
 	
-	# Flip motor direction when we hit our peak
-	if swing_rigid_body.angular_velocity.x < 0 and not going_backwards:
-		update_force(swing_rigid_body.constant_force.z * -1)
-		going_backwards = not going_backwards
-		clear_torque()
-	
-	# Flip motor direction when we hit our peak
-	if swing_rigid_body.angular_velocity.x > 0 and going_backwards:
-		update_force(swing_rigid_body.constant_force.z * -1)
-		going_backwards = not going_backwards
-		clear_torque()
+	# Only consider changing directions when we haven't done so recently
+	if not direction_change_lock:
+		# Flip motor direction when we hit our peak
+		if swing_rigid_body.angular_velocity.x < 0 and not going_backwards:
+			update_force(swing_rigid_body.constant_force.z * -1)
+			going_backwards = not going_backwards
+			direction_lock_timer.start()
+			direction_change_lock = true
+			clear_torque()
+		
+		# Flip motor direction when we hit our peak
+		if swing_rigid_body.angular_velocity.x > 0 and going_backwards:
+			update_force(swing_rigid_body.constant_force.z * -1)
+			going_backwards = not going_backwards
+			direction_lock_timer.start()
+			direction_change_lock = true
+			clear_torque()
 	
 	set_wind_sound(abs(swing_rigid_body.angular_velocity.x))
 
@@ -89,10 +100,18 @@ func set_wind_sound(speed):
 	# Ensure that maximums are not exceeded
 	if wind_sound_player.volume_db > 22:
 		wind_sound_player.volume_db = 22
-	if wind_sound_player.pitch_scale > 2.5:
-		wind_sound_player.pitch_scale = 2.5
+	if wind_sound_player.pitch_scale > 2.0:
+		wind_sound_player.pitch_scale = 2.0
 
 
 # Loop the wind audio
 func _on_wind_sound_finished():
 	wind_sound_player.play()
+
+
+func _on_ride_music_finished():
+	ride_music_player.play()
+
+
+func _on_direction_change_timer_timeout():
+	direction_change_lock = false

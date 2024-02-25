@@ -1,4 +1,4 @@
-[gd_scene load_steps=77 format=3 uid="uid://h7u8etak86k3"]
+[gd_scene load_steps=78 format=3 uid="uid://h7u8etak86k3"]
 
 [ext_resource type="Script" path="res://scripts & scenes/world.gd" id="1_0q376"]
 [ext_resource type="PackedScene" uid="uid://dwwyyt5xdrxoj" path="res://scripts & scenes/PlayerXR.tscn" id="2_54uce"]
@@ -18,6 +18,7 @@
 [ext_resource type="AudioStream" uid="uid://hnl5nvf8yksi" path="res://assets/audio/wind-loopable.mp3" id="15_2akjk"]
 [ext_resource type="Texture2D" uid="uid://dpd6bjd0ox1c2" path="res://assets/african_plain_trees_2.png" id="16_v1ftc"]
 [ext_resource type="Texture2D" uid="uid://cxvylqx6liqtj" path="res://assets/african_plain_trees_3.png" id="17_y87qq"]
+[ext_resource type="AudioStream" uid="uid://b6qmleiq20ri2" path="res://assets/audio/rock-music.mp3" id="19_e7l17"]
 
 [sub_resource type="PanoramaSkyMaterial" id="PanoramaSkyMaterial_235hm"]
 panorama = ExtResource("2_m64dl")
@@ -1734,6 +1735,9 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.15392, 0)
 [node name="Couch" parent="SwingRigidBody3D" instance=ExtResource("6_n0ubp")]
 transform = Transform3D(-1.106, 0, -1.67001e-07, 0, 1.106, 0, 1.67001e-07, 0, -1.106, -0.00523001, 3.58232, -0.528363)
 
+[node name="DirectionChangeTimer" type="Timer" parent="SwingRigidBody3D"]
+wait_time = 0.05
+
 [node name="Trees" type="Node3D" parent="."]
 transform = Transform3D(0.01, 0, 0, 0, 0.01, -1.62921e-09, 0, 1.62921e-09, 0.01, -16.5798, -2.47027, -49.3088)
 
@@ -1910,4 +1914,12 @@ skeleton = NodePath("")
 mesh = SubResource("ArrayMesh_wcx61")
 skeleton = NodePath("")
 
+[node name="RideMusic" type="AudioStreamPlayer3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.58389, -4.37742)
+stream = ExtResource("19_e7l17")
+unit_size = 19.81
+autoplay = true
+
 [connection signal="finished" from="SwingRigidBody3D/PlayerXR/WindSound" to="." method="_on_wind_sound_finished"]
+[connection signal="timeout" from="SwingRigidBody3D/DirectionChangeTimer" to="." method="_on_direction_change_timer_timeout"]
+[connection signal="finished" from="RideMusic" to="." method="_on_ride_music_finished"]
