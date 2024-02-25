@@ -1,4 +1,4 @@
-[gd_scene load_steps=76 format=3 uid="uid://h7u8etak86k3"]
+[gd_scene load_steps=78 format=3 uid="uid://h7u8etak86k3"]
 
 [ext_resource type="Script" path="res://scripts & scenes/world.gd" id="1_0q376"]
 [ext_resource type="PackedScene" uid="uid://dwwyyt5xdrxoj" path="res://scripts & scenes/PlayerXR.tscn" id="2_54uce"]
@@ -15,8 +15,10 @@
 [ext_resource type="Texture2D" uid="uid://pp5kb7qugepc" path="res://assets/buildings/source/Bui/Bui/building (9).jpg" id="12_00yvr"]
 [ext_resource type="Texture2D" uid="uid://8n1vb0mwenbi" path="res://assets/buildings/source/Bui/Bui/building (8).jpg" id="13_dkmwu"]
 [ext_resource type="Texture2D" uid="uid://cj8c4ahnd6okx" path="res://assets/buildings/source/Bui/Bui/building (1).jpg" id="14_igi1h"]
+[ext_resource type="AudioStream" uid="uid://hnl5nvf8yksi" path="res://assets/audio/wind-loopable.mp3" id="15_2akjk"]
 [ext_resource type="Texture2D" uid="uid://dpd6bjd0ox1c2" path="res://assets/african_plain_trees_2.png" id="16_v1ftc"]
 [ext_resource type="Texture2D" uid="uid://cxvylqx6liqtj" path="res://assets/african_plain_trees_3.png" id="17_y87qq"]
+[ext_resource type="AudioStream" uid="uid://b6qmleiq20ri2" path="res://assets/audio/rock-music.mp3" id="19_e7l17"]
 
 [sub_resource type="PanoramaSkyMaterial" id="PanoramaSkyMaterial_235hm"]
 panorama = ExtResource("2_m64dl")
@@ -337,7 +339,7 @@ size = Vector3(300, 0.1, 300)
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ucped"]
 albedo_texture = ExtResource("2_57117")
-uv1_scale = Vector3(900, 900, 900)
+uv1_scale = Vector3(450, 450, 450)
 
 [sub_resource type="BoxMesh" id="BoxMesh_xd3qu"]
 
@@ -354,7 +356,7 @@ albedo_texture = ExtResource("4_8udya")
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_rspc5"]
 albedo_color = Color(0.121569, 0.27451, 0.0980392, 1)
 albedo_texture = ExtResource("4_4b130")
-uv1_scale = Vector3(1, 45, 1)
+uv1_scale = Vector3(2.5, 2.5, 1)
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_mvkwy"]
 albedo_color = Color(0.270588, 0.270588, 0.270588, 1)
@@ -1684,7 +1686,7 @@ skeleton = NodePath("../..")
 
 [node name="HingeJoint3D" type="HingeJoint3D" parent="."]
 transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 0, 41.49, 0)
-node_a = NodePath("../SwingRigidBody3D")
+node_b = NodePath("../SwingRigidBody3D")
 motor/target_velocity = 0.349066
 motor/max_impulse = 0.5
 
@@ -1701,14 +1703,14 @@ mesh = SubResource("BoxMesh_r47u8")
 skeleton = NodePath("../../..")
 
 [node name="MeshInstance3D6" type="MeshInstance3D" parent="SwingRigidBody3D/CollisionShape3D"]
-transform = Transform3D(2.37435, 0, 0, 0, -2.45295, 0, 0, 0, 0.272512, 0, -19.4378, 0)
-material_override = SubResource("StandardMaterial3D_rspc5")
+transform = Transform3D(-2.374, 0, 2.38664e-08, 0, 2.453, 0, -2.07542e-07, 0, -0.273, 0, -19.4378, 0)
+material_override = SubResource("StandardMaterial3D_52b2h")
 mesh = SubResource("BoxMesh_r47u8")
 skeleton = NodePath("../../..")
 
 [node name="MeshInstance3D5" type="MeshInstance3D" parent="SwingRigidBody3D/CollisionShape3D"]
 transform = Transform3D(4.37114e-08, 3.82137e-15, -1, 8.74228e-08, -1, 0, -1, -8.74228e-08, -4.37114e-08, 0, -17.9952, 0)
-material_override = SubResource("StandardMaterial3D_rspc5")
+material_override = SubResource("StandardMaterial3D_52b2h")
 mesh = SubResource("PrismMesh_h4man")
 skeleton = NodePath("../../..")
 
@@ -1721,11 +1723,20 @@ skeleton = NodePath("../../..")
 [node name="PlayerXR" parent="SwingRigidBody3D" instance=ExtResource("2_54uce")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.470157, 3.56791, -0.499731)
 
+[node name="WindSound" type="AudioStreamPlayer" parent="SwingRigidBody3D/PlayerXR"]
+stream = ExtResource("15_2akjk")
+volume_db = 1.406
+pitch_scale = 1.03
+autoplay = true
+
 [node name="ImpulseLocation" type="Marker3D" parent="SwingRigidBody3D"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.15392, 0)
 
 [node name="Couch" parent="SwingRigidBody3D" instance=ExtResource("6_n0ubp")]
 transform = Transform3D(-1.106, 0, -1.67001e-07, 0, 1.106, 0, 1.67001e-07, 0, -1.106, -0.00523001, 3.58232, -0.528363)
+
+[node name="DirectionChangeTimer" type="Timer" parent="SwingRigidBody3D"]
+wait_time = 0.05
 
 [node name="Trees" type="Node3D" parent="."]
 transform = Transform3D(0.01, 0, 0, 0, 0.01, -1.62921e-09, 0, 1.62921e-09, 0.01, -16.5798, -2.47027, -49.3088)
@@ -1902,3 +1913,13 @@ skeleton = NodePath("")
 [node name="U3DMesh_006_marulaleaf_002_0" type="MeshInstance3D" parent="Trees/U3DMesh_012"]
 mesh = SubResource("ArrayMesh_wcx61")
 skeleton = NodePath("")
+
+[node name="RideMusic" type="AudioStreamPlayer3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.58389, -4.37742)
+stream = ExtResource("19_e7l17")
+unit_size = 19.81
+autoplay = true
+
+[connection signal="finished" from="SwingRigidBody3D/PlayerXR/WindSound" to="." method="_on_wind_sound_finished"]
+[connection signal="timeout" from="SwingRigidBody3D/DirectionChangeTimer" to="." method="_on_direction_change_timer_timeout"]
+[connection signal="finished" from="RideMusic" to="." method="_on_ride_music_finished"]
